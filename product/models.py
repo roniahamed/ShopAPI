@@ -56,6 +56,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, related_name='products', on_delete=models.CASCADE)
     brand = models.ForeignKey(Brand, related_name='products', on_delete=models.SET_NULL, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    sale_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     sku = models.CharField(max_length=100, unique=True)
     stock = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
