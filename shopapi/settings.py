@@ -58,9 +58,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'shopapi.urls'
 
+# Template configuration
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATIC_DIRS = [BASE_DIR / 'static']
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 TEMPLATES = [
     {
