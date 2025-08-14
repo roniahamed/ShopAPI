@@ -18,15 +18,15 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'slug', 'is_active', 'created_at', 'updated_at']    
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    brand = BrandSerializer(read_only=True, allow_null=True)
-    tags = TagSerializer(many=True, read_only=True)
+    category = serializers.SlugRelatedField(queryset=Category.objects.all(), slug_field = 'name')
+    brand = serializers.SlugRelatedField( allow_null=True, queryset = Brand.objects.all(), slug_field = 'name')
+    tags = serializers.SlugRelatedField(many=True, queryset = Tag.objects.all(), slug_field='name')
     discounted_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'description', 'category', 'brand', 'price','sale_price', 
+            'id', 'name', 'description', 'category', 'brand', 'price','sale_price', 'discounted_price', 
             'sku', 'stock', 'is_active', 'image', 'weight', 
             'dimensions', 'tags', 'created_at', 'updated_at'
         ]

@@ -30,43 +30,24 @@ class HomeAPIView(APIView):
 class ProductListAPIView(APIView):
 
     def get(self, request, format = None):
-        products = Product.objects.select_related('brand', 'category').prefetch_related('tags')
-
-        product_list = []
-
-        for product in products:
-            product_list.append({
-                'id': product.id,
-                'name': product.name,
-                'description': product.description,
-                'category': product.category.name,
-                'brand': product.brand.name if product.brand else None,
-                'price': str(product.price),
-                'sale_price': str(product.sale_price) if product.sale_price else None,
-                'sku': product.sku,
-                'stock': product.stock,
-                'is_active': product.is_active,
-                'image': product.get_image_url(),
-                'weight': str(product.weight) if product.weight else None,
-                'dimensions': product.dimensions,
-                'tags': [tag.name for tag in product.tags.all()],
-                'created_at': product.created_at.isoformat(),
-                'updated_at': product.updated_at.isoformat()    
-            })
-
-        response_data = {
-            'messages':'This is our products list',
-            'products': product_list
-        }
-        return Response(response_data, status=status.HTTP_200_OK)
+        products = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+        serializer = ProductSerializer(products, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request, format=None):
 
-        receive_data = request.data 
+        serializer = ProductSerializer(data = request.data)
 
-        response_data = {
+        if serializer.is_valid():
+            serializer.save()
+            validated_data = serializer.validated_data
+
+            response_data = {
             'messages':'Successfully adding your Products',
-            'products':receive_data
-        }
+            'products':validated_data
+            } 
 
-        return Response(response_data, status=status.HTTP_201_CREATED)
+            return Response(response_data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
