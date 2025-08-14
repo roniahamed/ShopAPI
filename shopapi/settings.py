@@ -58,6 +58,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'shopapi.urls'
 
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_DIRS = [BASE_DIR / 'static']
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

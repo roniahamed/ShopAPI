@@ -30,11 +30,33 @@ class HomeAPIView(APIView):
 class ProductListAPIView(APIView):
 
     def get(self, request, format = None):
-        # products = Product.objects.all()
+        products = Product.objects.select_related('brand', 'category').prefetch_related('tags')
+
+        product_list = []
+
+        for product in products:
+            product_list.append({
+                'id': product.id,
+                'name': product.name,
+                'description': product.description,
+                'category': product.category.name,
+                'brand': product.brand.name if product.brand else None,
+                'price': str(product.price),
+                'sale_price': str(product.sale_price) if product.sale_price else None,
+                'sku': product.sku,
+                'stock': product.stock,
+                'is_active': product.is_active,
+                'image': product.get_image_url(),
+                'weight': str(product.weight) if product.weight else None,
+                'dimensions': product.dimensions,
+                'tags': [tag.name for tag in product.tags.all()],
+                'created_at': product.created_at.isoformat(),
+                'updated_at': product.updated_at.isoformat()    
+            })
 
         response_data = {
             'messages':'This is our products list',
-            'products':[{'id': 1, 'name': 'Laptop'}, {'id': 2, 'name': 'Mouse'}]
+            'products': product_list
         }
         return Response(response_data, status=status.HTTP_200_OK)
     
