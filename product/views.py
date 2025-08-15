@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer
 from .models import Product, Tag, Brand, Category
+from django.http import Http404
 
 class HomeAPIView(APIView):
 
@@ -51,3 +52,25 @@ class ProductListAPIView(APIView):
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class DetailsProductAPIView(APIView):
+
+    def get_object(self, pk):
+
+        try:
+            return Product.objects.select_related('brand', 'category').prefetch_related('tags').get(pk=pk)
+        except Product.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+    
+    def put(self, request, pk, format=None):
+        product = self.get_object(pk)
+        serializer = ProductSerializer(product, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
