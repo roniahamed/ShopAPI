@@ -73,4 +73,9 @@ class DetailsProductAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def delete(self, request, pk, format=None):
+        product = self.get_object(pk)
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
         
