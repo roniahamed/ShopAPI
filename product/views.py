@@ -42,11 +42,10 @@ class ProductListAPIView(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            validated_data = serializer.validated_data
 
             response_data = {
             'messages':'Successfully adding your Products',
-            'products':validated_data
+            'products':serializer.data
             } 
 
             return Response(response_data, status=status.HTTP_201_CREATED)
@@ -77,5 +76,8 @@ class DetailsProductAPIView(APIView):
     def delete(self, request, pk, format=None):
         product = self.get_object(pk)
         product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        response_data = {
+            'message':'Deleted Successfully'
+        }
+        return Response(response_data,status=status.HTTP_204_NO_CONTENT)
         
