@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response 
 from rest_framework import status , filters
 from rest_framework.views import APIView
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer
 from .models import Product, Tag, Brand, Category
 from django.http import Http404
@@ -99,5 +99,19 @@ class ProductListView(generics.ListCreateAPIView):
     ordering = ['-price']
 class ProductDetailview(generics.RetrieveUpdateDestroyAPIView):
     queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class ProductListViewSets(viewsets.ModelViewSet):
+    queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['category', 'brand', 'tags']
+    search_fields = ['name', 'description', 'brand__name', 'tags__name', 'category__name']
+    ordering_fields = ['price', 'name']
+    ordering = ['-price']
+
+
     
 
