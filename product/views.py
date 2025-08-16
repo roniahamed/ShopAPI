@@ -89,3 +89,7 @@ class ProductListView(generics.ListCreateAPIView):
     queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
+
+class ProductDetailview(generics.RetrieveUpdateDestroyAPIView):
+    queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+    serializer_class = ProductSerializer
