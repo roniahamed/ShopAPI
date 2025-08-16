@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from rest_framework.response import Response 
-from rest_framework import status 
+from rest_framework import status , filters
 from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer
 from .models import Product, Tag, Brand, Category
 from django.http import Http404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
+from django_filters.rest_framework import DjangoFilterBackend
 
 class HomeAPIView(APIView):
 
@@ -85,12 +86,18 @@ class DetailsProductAPIView(APIView):
         
 # Generic views 
 
+
 class ProductListView(generics.ListCreateAPIView):
-    queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+    queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['category', 'brand', 'tags']
+    search_fields = ['name', 'description', 'brand__name', 'tags__name', 'category__name']
+    ordering_fields = ['price', 'name']
+    ordering = ['-price']
 class ProductDetailview(generics.RetrieveUpdateDestroyAPIView):
     queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
-    serializer_class = ProductSerializer
-    filterset_fields = ['category', 'brand', 'tags']
+    
+
