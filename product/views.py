@@ -2,9 +2,11 @@ from django.shortcuts import render
 from rest_framework.response import Response 
 from rest_framework import status 
 from rest_framework.views import APIView
+from rest_framework import generics
 from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer
 from .models import Product, Tag, Brand, Category
 from django.http import Http404
+from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 
 class HomeAPIView(APIView):
 
@@ -81,3 +83,9 @@ class DetailsProductAPIView(APIView):
         }
         return Response(response_data,status=status.HTTP_204_NO_CONTENT)
         
+# Generic views 
+
+class ProductListView(generics.ListCreateAPIView):
+    queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
