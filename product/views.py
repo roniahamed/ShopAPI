@@ -93,3 +93,4 @@ class ProductListView(generics.ListCreateAPIView):
 class ProductDetailview(generics.RetrieveUpdateDestroyAPIView):
     queryset = queryset = Product.objects.select_related('brand', 'category').prefetch_related('tags').all()
     serializer_class = ProductSerializer
+    filterset_fields = ['category', 'brand', 'tags']
