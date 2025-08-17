@@ -1,10 +1,13 @@
 from django.urls import path, include
-from .views import HomeAPIView, ProductListAPIView, DetailsProductAPIView, ProductListView, ProductDetailview, ProductListViewSets
+from .views import HomeAPIView, ProductListAPIView, DetailsProductAPIView, ProductListView, ProductDetailview, ProductListViewSets, TagListView, BrandListView, CategoryListView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
 router.register(r'products', ProductListViewSets, basename='product')
+router.register(r'tags', TagListView, basename='tag')
+router.register(r'brands', BrandListView, basename='brand')
+router.register(r'categories', CategoryListView, basename='category')  
 
 urlpatterns = [
     path('',HomeAPIView.as_view(), name='home'),
