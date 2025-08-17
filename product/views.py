@@ -130,4 +130,11 @@ class BrandListView(viewsets.ModelViewSet):
     ordering_fields = ['name']
     ordering = ['name']
 
-
+class CategoryListView(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
+    ordering = ['name']
