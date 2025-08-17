@@ -112,6 +112,12 @@ class ProductListViewSets(viewsets.ModelViewSet):
     ordering_fields = ['price', 'name']
     ordering = ['-price']
 
-
-    
+class TagListView(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['name']
+    ordering = ['name']
 
