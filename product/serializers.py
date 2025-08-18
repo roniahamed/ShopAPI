@@ -87,4 +87,4 @@ class ReviewSerializer(serializers.ModelSerializer):
         if data.get('title') is None and data.get('body') is None:
             raise serializers.ValidationError("Either title or body must be provided.")
         return data
-    
+

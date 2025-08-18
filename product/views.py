@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status , filters
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
-from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer
-from .models import Product, Tag, Brand, Category
+from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer, ReviewSerializer
+from .models import Product, Tag, Brand, Category, Review
 from django.http import Http404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
@@ -138,3 +138,14 @@ class CategoryListView(viewsets.ModelViewSet):
     search_fields = ['name']
     ordering_fields = ['name']
     ordering = ['name']
+
+
+class ReviewListView(generics.ListCreateAPIView):
+    queryset = Review.objects.select_related('product', 'user').all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    ordering = ['-created_at']
+    
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
