@@ -3,6 +3,8 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import itertools
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.exceptions import ValidationError
 
 
 class Category(models.Model):
@@ -105,6 +107,30 @@ class Product(models.Model):
             return self.image.url
         return None 
     
+class Review(models.Model):
+    product = models.ForeignKey(Product, related_name='reviews', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='reviews', on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        help_text="Rating must be an integer between 1 and 5."
+    )
+    title = models.CharField(max_length=255, blank=True)
+    body = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    
+    class Meta:
+        unique_together = ('product', 'user')
+        ordering = ['-created_at']
 
+    def __str__(self):
+        return f"{self.user.username} review on {self.product.name} ({self.rating})"
+
+    def clean(self):
+        super().clean()
+        if not (1 <= self.rating <= 5):
+            raise ValidationError({'rating': 'Rating must be between 1 and 5.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean()  # Ensures validation is enforced
+        super().save(*args, **kwargs)
