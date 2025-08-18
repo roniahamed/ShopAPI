@@ -58,3 +58,33 @@ class ProductSerializer(serializers.ModelSerializer):
                 'percentage': f"{percentage:.2f}%",
             }
         return None
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username', read_only=True)
+    product = serializers.SlugRelatedField(queryset=Product.objects.all(), slug_field='name')
+
+    class Meta:
+        model = Review
+        fields = ['id', 'product', 'user', 'rating', 'title', 'body', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
+        extra_kwargs = {
+            'rating': {'min_value': 1, 'max_value': 5},
+            'title': {'required': False},
+            'body': {'required': False},
+        }
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['product', 'user'],
+                message="You have already reviewed this product."
+            )
+        ]
+        
+    
+    def validate(self, data):
+        if data.get('rating') is None:
+            raise serializers.ValidationError("Rating is required.")
+        if data.get('title') is None and data.get('body') is None:
+            raise serializers.ValidationError("Either title or body must be provided.")
+        return data
+    
