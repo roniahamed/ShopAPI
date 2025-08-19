@@ -140,12 +140,15 @@ class CategoryListView(viewsets.ModelViewSet):
     ordering = ['name']
 
 
-class ReviewListView(generics.ListCreateAPIView):
-    queryset = Review.objects.select_related('product', 'user').all()
+class ReviewListView(viewsets.ModelViewSet):
+    """ViewSet for handling product reviews.
+    """
+    queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     ordering = ['-created_at']
-    
+    print('ReviewListView called')
+
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
