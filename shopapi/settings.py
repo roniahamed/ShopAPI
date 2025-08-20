@@ -165,3 +165,14 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 2,
 }
+
+
+# Cloudinary storage settings
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME' : '',
+    'API_KEY' : '',
+    'API_SECRET' : ''
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
