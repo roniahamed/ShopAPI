@@ -23,3 +23,4 @@ def validate_file_mimetype(file):
     if mime_type not in allowed_mime_types:
         raise ValidationError(f"Unsupported file type:'{mime_type}'. Allowed types are JPEG, PNG, PDF.")
     
+    

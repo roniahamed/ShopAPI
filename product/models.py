@@ -3,9 +3,9 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 import itertools
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 from django.core.exceptions import ValidationError
-
+from .validators import validate_file_mimetype, validate_file_size
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -62,6 +62,12 @@ class Tag(models.Model):
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
 
+
+class ProductImg(models.Model):
+    title = models.CharField(max_length=100)
+    uploaded_file = models.FileField(upload_to='images', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']), validate_file_size, validate_file_mimetype]),
+    created_at = models.DateTimeField(auto_now_add=True)
+    
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
