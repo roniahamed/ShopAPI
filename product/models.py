@@ -67,7 +67,9 @@ class ProductImg(models.Model):
     title = models.CharField(max_length=100)
     uploaded_file = models.FileField(upload_to='images', validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']), validate_file_size, validate_file_mimetype]),
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
+    def __str__(self):
+        return self.title 
 
 class Product(models.Model):
     name = models.CharField(max_length=255)
