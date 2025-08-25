@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from rest_framework.response import Response 
-from rest_framework import status , filters
+from rest_framework import status , filters, generics
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
-from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer, ReviewSerializer
-from .models import Product, Tag, Brand, Category, Review
+from .serializers import TagSerializer, BrandSerializer, CategorySerializer, ProductSerializer, ReviewSerializer, ProductImageSerializer
+from .models import Product, Tag, Brand, Category, Review, ProductImg
 from django.http import Http404
 from rest_framework.permissions import IsAdminUser, IsAuthenticated, IsAuthenticatedOrReadOnly
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class HomeAPIView(APIView):
 
@@ -152,3 +153,12 @@ class ReviewListView(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+class ProductImageUploadListView(generics.ListCreateAPIView):
+
+    parser_classes = [MultiPartParser, FormParser]
+
+    queryset = ProductImg.objects.all().order_by('-created_at')
+    serializer_class = ProductImageSerializer
+
+
