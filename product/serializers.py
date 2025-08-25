@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Category, Brand, Tag, Review   
+from .models import Product, Category, Brand, Tag, Review, ProductImg
 from django.contrib.auth.models import User
 
 class UserPublicSerializer(serializers.ModelSerializer):
@@ -88,3 +88,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Either title or body must be provided.")
         return data
 
+class ProductImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductImg
+        fields = ('id', 'title', 'created_at', 'image')
+        read_only_fields = ('id', 'created_at')
