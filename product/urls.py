@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import HomeAPIView, ProductListAPIView, DetailsProductAPIView, ProductListView, ProductDetailview, ProductListViewSets, TagListView, BrandListView, CategoryListView, ReviewListView
+from .views import HomeAPIView, ProductListAPIView, DetailsProductAPIView, ProductListView, ProductDetailview, ProductListViewSets, TagListView, BrandListView, CategoryListView, ReviewListView, ProductImageUploadListView
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
@@ -18,4 +18,5 @@ urlpatterns = [
     # path('products/generic/', ProductListView.as_view(), name='products-generic' ),
     # path('product/<int:pk>/', ProductDetailview.as_view(), name='product-details' ),
     path('', include(router.urls)),
+    path('product-images/', ProductImageUploadListView.as_view(), name='product-image-upload' ),
 ]
